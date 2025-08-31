@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Network Security Assessment Framework (NSAF)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .header h1 {
+            font-size: 3rem;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+        
+        .header .subtitle {
+            font-size: 1.2rem;
+            color: #7f8c8d;
+            margin-bottom: 1rem;
+        }
+        
+        .badges {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+        
+        .badge {
+            background: #3498db;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            text-decoration: none;
+            transition: background 0.3s;
+        }
+        
+        .badge:hover {
+            background: #2980b9;
+        }
+        
+        .content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+        }
+        
+        .card h2 {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .card-icon {
+            font-size: 1.5rem;
+        }
+        
+        .features {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .features h2 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 2rem;
+            font-size: 2rem;
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .feature {
+            padding: 1.5rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .feature h3 {
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+        
+        .code-block {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 1.5rem;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+        
+        .btn {
+            display: inline-block;
+            background: #3498db;
+            color: white;
+            padding: 1rem 2rem;
+            text-decoration: none;
+            border-radius: 50px;
+            transition: all 0.3s;
+            font-weight: bold;
+            text-align: center;
+        }
+        
+        .btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn-large {
+            font-size: 1.2rem;
+            padding: 1.5rem 3rem;
+        }
+        
+        .footer {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.8);
+            margin-top: 3rem;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .content {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🛡️ NSAF</h1>
+            <div class="subtitle">Network Security Assessment Framework</div>
+            <p>A comprehensive Python-based network security assessment tool that automates vulnerability scanning, network reconnaissance, and generates detailed security reports.</p>
+            
+            <div class="badges">
+                <a href="https://github.com/yourusername/network-security-assessment-framework" class="badge">📂 GitHub</a>
+                <a href="https://github.com/yourusername/network-security-assessment-framework/wiki" class="badge">📖 Wiki</a>
+                <a href="#installation" class="badge">⚡ Get Started</a>
+                <a href="#examples" class="badge">💡 Examples</a>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="card">
+                <h2><span class="card-icon">🔍</span>Quick Start</h2>
+                <p>Get started with NSAF in minutes. Install, scan, and generate reports with simple commands.</p>
+                <div class="code-block">pip install nsaf
+nsaf assess -t 192.168.1.0/24 --vuln-scan</div>
+                <a href="#installation" class="btn">Install Now</a>
+            </div>
+
+            <div class="card">
+                <h2><span class="card-icon">📊</span>Comprehensive Reports</h2>
+                <p>Generate professional security assessment reports in multiple formats including HTML, PDF, JSON, and CSV.</p>
+                <div class="code-block">nsaf assess -t target --all-reports</div>
+                <a href="#reporting" class="btn">Learn More</a>
+            </div>
+
+            <div class="card">
+                <h2><span class="card-icon">🔧</span>Extensible</h2>
+                <p>Built with modularity in mind. Easily extend with custom vulnerability scanners and report generators.</p>
+                <div class="code-block">from nsaf import NetworkScanner
+scanner = NetworkScanner()
+results = scanner.port_scan(hosts)</div>
+                <a href="#api" class="btn">API Docs</a>
+            </div>
+        </div>
+
+        <div class="features">
+            <h2>🚀 Key Features</h2>
+            <div class="feature-grid">
+                <div class="feature">
+                    <h3>🌐 Network Discovery</h3>
+                    <p>Comprehensive host discovery using multiple techniques including ping sweeps, ARP scanning, and TCP SYN probes.</p>
+                </div>
+                
+                <div class="feature">
+                    <h3>🔌 Port Scanning</h3>
+                    <p>Advanced port scanning with TCP connect, TCP SYN, and UDP scanning capabilities with service detection.</p>
+                </div>
+                
+                <div class="feature">
+                    <h3>🚨 Vulnerability Assessment</h3>
+                    <p>Automated scanning for common vulnerabilities, misconfigurations, and security weaknesses.</p>
+                </div>
+                
+                <div class="feature">
+                    <h3>🔒 SSL/TLS Analysis</h3>
+                    <p>In-depth SSL/TLS configuration analysis including cipher strength and certificate validation.</p>
+                </div>
+                
+                <div class="feature">
+                    <h3>🌍 Web Application Testing</h3>
+                    <p>Web-specific vulnerability checks including directory traversal, security headers, and common files.</p>
+                </div>
+                
+                <div class="feature">
+                    <h3>📋 Professional Reporting</h3>
+                    <p>Generate detailed, professional reports with executive summaries and technical details.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="installation">
+            <h2>📦 Installation</h2>
+            <p>Install NSAF using pip or clone from GitHub for development:</p>
+            
+            <h3>Via pip (Recommended)</h3>
+            <div class="code-block">pip install nsaf</div>
+            
+            <h3>From Source</h3>
+            <div class="code-block">git clone https://github.com/yourusername/network-security-assessment-framework.git
+cd network-security-assessment-framework
+pip install -e .</div>
+            
+            <h3>With Optional Dependencies</h3>
+            <div class="code-block">pip install "nsaf[all]"  # All features
+pip install "nsaf[dev]"  # Development tools</div>
+        </div>
+
+        <div class="card" id="examples">
+            <h2>💡 Usage Examples</h2>
+            
+            <h3>Basic Network Scan</h3>
+            <div class="code-block">nsaf scan -t 192.168.1.0/24 -p 1-1000</div>
+            
+            <h3>Comprehensive Assessment</h3>
+            <div class="code-block">nsaf assess -t 192.168.1.100 --vuln-scan --all-reports</div>
+            
+            <h3>Python API</h3>
+            <div class="code-block">from nsaf import NetworkScanner, VulnerabilityScanner, ReportGenerator
+
+# Initialize components
+scanner = NetworkScanner()
+vuln_scanner = VulnerabilityScanner()
+report_gen = ReportGenerator()
+
+# Perform scan
+hosts = scanner.discover_hosts("192.168.1.0/24")
+scan_results = scanner.port_scan(hosts)
+
+# Assess vulnerabilities
+assessment = vuln_scanner.assess(scan_results)
+
+# Generate report
+report_gen.generate_html_report(assessment)</div>
+        </div>
+
+        <div class="card" id="documentation">
+            <h2>📚 Documentation</h2>
+            <p>Comprehensive documentation to help you get the most out of NSAF:</p>
+            <ul style="margin: 1rem 0; padding-left: 2rem;">
+                <li><strong>Wiki:</strong> Detailed guides and tutorials</li>
+                <li><strong>API Reference:</strong> Complete API documentation</li>
+                <li><strong>Examples:</strong> Real-world usage examples</li>
+                <li><strong>Contributing:</strong> Guidelines for contributors</li>
+            </ul>
+            <a href="https://github.com/yourusername/network-security-assessment-framework/wiki" class="btn">Visit Wiki</a>
+        </div>
+
+        <div class="card">
+            <h2>⚠️ Legal Notice</h2>
+            <p><strong>Important:</strong> NSAF is intended for authorized security testing only. Users are responsible for:</p>
+            <ul style="margin: 1rem 0; padding-left: 2rem;">
+                <li>Obtaining proper authorization before scanning networks</li>
+                <li>Complying with applicable laws and regulations</li>
+                <li>Using the tool responsibly and ethically</li>
+                <li>Respecting privacy and system integrity</li>
+            </ul>
+            <p>The developers are not responsible for misuse of this tool.</p>
+        </div>
+
+        <div class="footer">
+            <p>© 2025 Network Security Assessment Framework (NSAF) - Licensed under MIT License</p>
+            <p>Built with ❤️ for the cybersecurity community</p>
+        </div>
+    </div>
+</body>
+</html>
