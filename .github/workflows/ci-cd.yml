@@ -11,13 +11,13 @@ on:
 jobs:
   test:
     runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        python-version: ['3.7', '3.8', '3.9', '3.10', '3.11', '3.12']
-        exclude:
-          - os: macos-latest
-            python-version: '3.7'
+        python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']
 
     steps:
     - uses: actions/checkout@v4
@@ -40,6 +40,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         pip install pytest pytest-cov flake8 black isort mypy
+      continue-on-error: false
 
     - name: Lint with flake8
       run: |
@@ -74,6 +75,8 @@ jobs:
         fail_ci_if_error: false
 
   security-scan:
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -99,7 +102,7 @@ jobs:
       continue-on-error: true
 
     - name: Upload security reports
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: security-reports
         path: |
@@ -109,6 +112,8 @@ jobs:
   build:
     needs: [test, security-scan]
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
     - uses: actions/checkout@v4
 
@@ -131,7 +136,7 @@ jobs:
         twine check dist/*
 
     - name: Upload build artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: dist
         path: dist/
@@ -146,7 +151,7 @@ jobs:
 
     steps:
     - name: Download build artifacts
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: dist
         path: dist/
