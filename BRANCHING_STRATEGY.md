@@ -12,11 +12,12 @@ This document outlines the branching strategy and repository access control for 
 - **Merge Policy**: Only from `release` branch via reviewed PRs
 
 ### 🚀 **Release Branch** (`release`)
-- **Purpose**: Public release candidates and stable versions
+- **Purpose**: **ONLY SOURCE FOR ALL RELEASES** - Public release candidates and stable versions
 - **Access**: Public - Can be forked by anyone
 - **Protection**: Protected from direct pushes
 - **Contains**: Release-ready code, cleaned of development artifacts
 - **Merge Policy**: From `dev` branch when ready for release
+- **Release Policy**: ALL GitHub releases, tags, and packages are built ONLY from this branch
 
 ### 🛠️ **Dev Branch** (`dev`)
 - **Purpose**: Active development and issue resolution
@@ -48,9 +49,10 @@ This document outlines the branching strategy and repository access control for 
 2. **Merge approved changes** to `dev`
 3. **Test thoroughly** on `dev`
 4. **Create PR** from `dev` to `release` when ready
-5. **Clean release branch** (remove dev artifacts)
-6. **Tag release** on `release` branch
-7. **Merge** `release` to `main` for archival
+5. **Clean release branch** (remove dev artifacts using release scripts)
+6. **Tag release** on `release` branch - **THIS IS THE ONLY RELEASE SOURCE**
+7. **All GitHub releases, packages, and Docker images are built from `release` branch only**
+8. **Merge** `release` to `main` for archival
 
 ## 🛡️ Repository Access Control
 
@@ -150,6 +152,9 @@ git push origin release
 git tag -a v1.0.0 -m "Release v1.0.0"
 git push origin v1.0.0
 
+# IMPORTANT: All releases are built from 'release' branch only
+# GitHub Actions will automatically build packages from this branch
+
 # Merge to main (via PR for audit trail)
 git checkout main
 git merge release
@@ -164,11 +169,14 @@ git push origin main
 4. **Private Main**: `main` branch serves as your private production archive
 5. **Clear Workflow**: Defined path from development to production
 6. **Quality Control**: Multiple review stages before reaching `main`
+7. ****SINGLE SOURCE OF TRUTH**: ALL releases come exclusively from `release` branch**
 
 ## 📝 Notes
 
 - Contributors should target `dev` branch for PRs
 - Release branch gets cleaned of development artifacts before tagging
 - Main branch serves as the authoritative production history
+- **ALL GitHub releases, tags, packages, and Docker images are built ONLY from `release` branch**
 - Use semantic versioning for all releases
 - GitHub Actions workflows should run on all branches for CI/CD
+- **Never create releases from `main` or `dev` branches - only from `release`**
