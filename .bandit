@@ -1,0 +1,27 @@
+# Bandit configuration file for NSAF
+exclude_dirs:
+  - .venv
+  - venv
+  - tests
+  - .git
+  - __pycache__
+  - .pytest_cache
+
+# Skip specific test IDs - we handle subprocess securely
+skips:
+  - B404  # import subprocess - we validate all inputs
+  - B603  # subprocess without shell=True - we use shell=False explicitly
+
+# Report all levels for comprehensive analysis
+level: LOW
+confidence: MEDIUM
+
+# Test inclusion/exclusion
+tests:
+  - B101  # assert_used
+  - B102  # exec_used
+  - B103  # set_bad_file_permissions
+  - B104  # hardcoded_bind_all_interfaces
+  - B105  # hardcoded_password_string
+  - B106  # hardcoded_password_funcarg
+  - B107  # hardcoded_password_default

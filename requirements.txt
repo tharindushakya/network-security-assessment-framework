@@ -16,3 +16,4 @@ cryptography>=44.0.1
 paramiko>=3.4.0
 shodan>=1.30.0
 validators>=0.22.0
+bandit>=1.7.5
