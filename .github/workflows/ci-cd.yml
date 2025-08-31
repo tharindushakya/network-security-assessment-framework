@@ -76,6 +76,8 @@ jobs:
         fail_ci_if_error: false
 
   security-scan:
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
