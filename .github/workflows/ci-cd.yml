@@ -109,6 +109,8 @@ jobs:
   build:
     needs: [test, security-scan]
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
     - uses: actions/checkout@v4
 
