@@ -13,7 +13,7 @@ matplotlib==3.8.2
 pandas==2.1.4
 ipaddress==1.0.23
 netifaces==0.11.0
-dnspython==2.4.2
+dnspython==2.6.1
 cryptography==41.0.8
 paramiko==3.4.0
 shodan==1.30.0
