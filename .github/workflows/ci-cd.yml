@@ -11,6 +11,8 @@ on:
 jobs:
   test:
     runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
     strategy:
       fail-fast: false
       matrix:
@@ -73,6 +75,8 @@ jobs:
         fail_ci_if_error: false
 
   security-scan:
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -108,6 +112,8 @@ jobs:
   build:
     needs: [test, security-scan]
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
     - uses: actions/checkout@v4
 
