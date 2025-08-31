@@ -23,6 +23,19 @@ share/python-wheels/
 *.egg
 MANIFEST
 
+# Release exclusions - Build artifacts
+build/
+dist/
+*.egg-info/
+.eggs/
+*.whl
+*.tar.gz
+
+# Release exclusions - Installation test files
+test_installation.py
+install_test.py
+setup_test.py
+
 # PyInstaller
 *.manifest
 *.spec
@@ -143,3 +156,79 @@ config.local.yaml
 config.local.json
 *.secret
 *.secrets
+
+# Release exclusions - Summary and documentation files
+PROJECT_COMPLETE.md
+PROJECT_STRUCTURE.md
+SECURITY_REMEDIATION_SUMMARY.md
+SECURITY_CONFIG.md
+
+# Release exclusions - Test and development files
+test_*.py
+*_test.py
+demo*.py
+demo*.json
+*_demo.*
+*_results_*.json
+*_scan_*.json
+security_scan_*.json
+bandit_*.json
+pytest.ini
+
+# Release exclusions - Development artifacts
+.pytest_cache/
+test_results/
+test_output/
+benchmark_results/
+performance_tests/
+
+# Release exclusions - Temporary and sample files
+*.sample
+*.example
+sample_*
+example_*
+*_sample.*
+*_example.*
+
+# Release exclusions - Development documentation
+DEVELOPMENT.md
+TESTING.md
+BENCHMARKS.md
+TODO.md
+NOTES.md
+DEV_NOTES.md
+
+# Release exclusions - CI/CD artifacts
+.github/workflows/dev-*.yml
+.github/workflows/test-*.yml
+.github/workflows/benchmark-*.yml
+
+# Release exclusions - Database and cache files
+*.db
+*.sqlite
+*.sqlite3
+cache/
+.cache/
+__pycache__/
+
+# Release exclusions - Editor and IDE files
+.vscode/settings.json
+.vscode/launch.json
+.vscode/tasks.json
+.idea/
+*.sublime-*
+.editorconfig
+
+# Release exclusions - OS and system files
+.DS_Store
+Thumbs.db
+desktop.ini
+.directory
+
+# Release exclusions - Archive and compressed files
+*.zip
+*.tar.gz
+*.7z
+*.rar
+archives/
+backups/

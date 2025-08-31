@@ -1,0 +1,225 @@
+name: Create Release
+
+on:
+  push:
+    tags:
+      - 'v*'  # Trigger on version tags like v1.0.0
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (e.g., v1.0.0)'
+        required: true
+        default: 'v1.0.0'
+
+jobs:
+  create-release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Fetch all history for changelog generation
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install build twine setuptools wheel
+
+    - name: Get version from tag
+      id: get_version
+      run: |
+        if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+          VERSION="${{ github.event.inputs.version }}"
+        else
+          VERSION=${GITHUB_REF#refs/tags/}
+        fi
+        echo "version=${VERSION}" >> $GITHUB_OUTPUT
+        echo "version_number=${VERSION#v}" >> $GITHUB_OUTPUT
+
+    - name: Clean repository for release
+      run: |
+        # Remove summary and development files
+        rm -f PROJECT_COMPLETE.md
+        rm -f PROJECT_STRUCTURE.md  
+        rm -f SECURITY_REMEDIATION_SUMMARY.md
+        rm -f SECURITY_CONFIG.md
+        
+        # Remove test files
+        rm -f test_*.py
+        rm -f *_test.py
+        rm -f demo*.py
+        rm -f test_installation.py
+        rm -f test_security_fixes.py
+        rm -f pytest.ini
+        
+        # Remove scan results
+        rm -f security_scan_*.json
+        rm -f bandit_*.json
+        rm -f *_scan_results_*.json
+        rm -f demo*_results_*.json
+        
+        # Remove development artifacts
+        find . -name "__pycache__" -type d -exec rm -rf {} + 2>/dev/null || true
+        find . -name "*.pyc" -delete 2>/dev/null || true
+        find . -name "*.pyo" -delete 2>/dev/null || true
+        find . -name ".pytest_cache" -type d -exec rm -rf {} + 2>/dev/null || true
+        
+        # Remove IDE files
+        rm -rf .vscode/ .idea/ 2>/dev/null || true
+        
+        # Remove logs and temporary files
+        rm -rf logs/ reports/ 2>/dev/null || true
+        find . -name "*.log" -delete 2>/dev/null || true
+        find . -name "*.tmp" -delete 2>/dev/null || true
+
+    - name: Update version in setup.py
+      run: |
+        sed -i "s/version=\".*\"/version=\"${{ steps.get_version.outputs.version_number }}\"/" setup.py
+
+    - name: Build package
+      run: |
+        python -m build
+
+    - name: Generate changelog
+      id: changelog
+      run: |
+        # Generate changelog from git commits since last tag
+        LAST_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
+        if [ -z "$LAST_TAG" ]; then
+          CHANGELOG=$(git log --oneline --pretty=format:"- %s (%h)" HEAD | head -20)
+        else
+          CHANGELOG=$(git log --oneline --pretty=format:"- %s (%h)" ${LAST_TAG}..HEAD)
+        fi
+        
+        # Create changelog file
+        cat > CHANGELOG.txt << EOF
+        ## What's Changed
+        
+        ${CHANGELOG}
+        
+        ## Installation
+        
+        \`\`\`bash
+        pip install nsaf==${{ steps.get_version.outputs.version_number }}
+        \`\`\`
+        
+        ## Docker
+        
+        \`\`\`bash
+        docker pull ghcr.io/tharindushakya/nsaf:${{ steps.get_version.outputs.version }}
+        \`\`\`
+        EOF
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ steps.get_version.outputs.version }}
+        release_name: NSAF ${{ steps.get_version.outputs.version }}
+        body_path: CHANGELOG.txt
+        draft: false
+        prerelease: false
+
+    - name: Upload Source Distribution
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: dist/nsaf-${{ steps.get_version.outputs.version_number }}.tar.gz
+        asset_name: nsaf-${{ steps.get_version.outputs.version_number }}.tar.gz
+        asset_content_type: application/gzip
+
+    - name: Upload Wheel Distribution
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: dist/nsaf-${{ steps.get_version.outputs.version_number }}-py3-none-any.whl
+        asset_name: nsaf-${{ steps.get_version.outputs.version_number }}-py3-none-any.whl
+        asset_content_type: application/zip
+
+    - name: Publish to PyPI
+      env:
+        TWINE_USERNAME: __token__
+        TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+      run: |
+        twine upload dist/* --skip-existing
+      continue-on-error: true  # Don't fail if PyPI upload fails
+
+    - name: Create Docker image
+      run: |
+        # Create optimized Dockerfile for release
+        cat > Dockerfile << EOF
+        FROM python:3.9-slim
+        
+        WORKDIR /app
+        
+        # Install system dependencies
+        RUN apt-get update && apt-get install -y \\
+            nmap \\
+            && rm -rf /var/lib/apt/lists/*
+        
+        # Copy package files
+        COPY dist/nsaf-${{ steps.get_version.outputs.version_number }}-py3-none-any.whl .
+        
+        # Install NSAF
+        RUN pip install nsaf-${{ steps.get_version.outputs.version_number }}-py3-none-any.whl
+        
+        # Create non-root user
+        RUN useradd -m -u 1000 nsaf
+        USER nsaf
+        
+        ENTRYPOINT ["python", "-m", "nsaf"]
+        EOF
+        
+        # Build Docker image
+        docker build -t ghcr.io/tharindushakya/nsaf:${{ steps.get_version.outputs.version }} .
+        docker build -t ghcr.io/tharindushakya/nsaf:latest .
+
+    - name: Login to GitHub Container Registry
+      uses: docker/login-action@v2
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Push Docker image
+      run: |
+        docker push ghcr.io/tharindushakya/nsaf:${{ steps.get_version.outputs.version }}
+        docker push ghcr.io/tharindushakya/nsaf:latest
+
+    - name: Update release with Docker info
+      run: |
+        # Add Docker information to release notes
+        gh release edit ${{ steps.get_version.outputs.version }} --notes-file - << EOF
+        $(gh release view ${{ steps.get_version.outputs.version }} --json body -q .body)
+        
+        ## Docker Images
+        
+        - \`ghcr.io/tharindushakya/nsaf:${{ steps.get_version.outputs.version }}\`
+        - \`ghcr.io/tharindushakya/nsaf:latest\`
+        
+        ## Verification
+        
+        \`\`\`bash
+        # Verify package installation
+        pip install nsaf==${{ steps.get_version.outputs.version_number }}
+        python -c "import nsaf; print('NSAF installed successfully')"
+        
+        # Verify Docker image
+        docker run --rm ghcr.io/tharindushakya/nsaf:${{ steps.get_version.outputs.version }} --help
+        \`\`\`
+        EOF
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

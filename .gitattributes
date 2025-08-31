@@ -1,0 +1,63 @@
+# Git attributes for NSAF releases
+
+# Documentation files - exclude from archives
+PROJECT_COMPLETE.md export-ignore
+PROJECT_STRUCTURE.md export-ignore
+SECURITY_REMEDIATION_SUMMARY.md export-ignore
+SECURITY_CONFIG.md export-ignore
+
+# Test files - exclude from archives
+test_*.py export-ignore
+*_test.py export-ignore
+demo*.py export-ignore
+demo*.json export-ignore
+test_installation.py export-ignore
+test_security_fixes.py export-ignore
+pytest.ini export-ignore
+
+# Development files - exclude from archives
+.github/workflows/dev-*.yml export-ignore
+.github/workflows/test-*.yml export-ignore
+.github/ISSUE_TEMPLATE/ export-ignore
+.github/PULL_REQUEST_TEMPLATE.md export-ignore
+
+# Security scan results - exclude from archives
+security_scan_*.json export-ignore
+bandit_*.json export-ignore
+*_scan_results_*.json export-ignore
+
+# Logs and temporary files - exclude from archives
+logs/ export-ignore
+reports/ export-ignore
+*.log export-ignore
+
+# Virtual environment - exclude from archives
+.venv/ export-ignore
+venv/ export-ignore
+
+# IDE files - exclude from archives
+.vscode/ export-ignore
+.idea/ export-ignore
+
+# OS files - exclude from archives
+.DS_Store export-ignore
+Thumbs.db export-ignore
+desktop.ini export-ignore
+
+# Line ending settings
+*.py text eol=lf
+*.md text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.json text eol=lf
+*.txt text eol=lf
+*.sh text eol=lf
+
+# Binary files
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.pdf binary
+*.zip binary
+*.tar.gz binary

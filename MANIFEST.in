@@ -1,0 +1,84 @@
+# MANIFEST.in - Controls what files are included in Python package distributions
+
+# Include essential files
+include README.md
+include LICENSE
+include CHANGELOG.md
+include CONTRIBUTING.md
+include SECURITY.md
+include requirements.txt
+include setup.py
+
+# Include package source code
+recursive-include nsaf *.py
+
+# Include templates and static files needed for functionality
+recursive-include nsaf/templates *.html
+recursive-include nsaf/templates *.css
+recursive-include nsaf/templates *.js
+
+# Include documentation
+recursive-include docs *.md
+recursive-include docs *.rst
+
+# Include example scripts (but not demo files)
+recursive-include examples *.py
+recursive-include examples *.md
+
+# Exclude development and test files
+exclude demo*.py
+exclude test_*.py
+exclude *_test.py
+exclude test_installation.py
+exclude test_security_fixes.py
+exclude pytest.ini
+
+# Exclude summary and analysis files
+exclude PROJECT_COMPLETE.md
+exclude PROJECT_STRUCTURE.md
+exclude SECURITY_REMEDIATION_SUMMARY.md
+exclude SECURITY_CONFIG.md
+
+# Exclude security scan results
+exclude security_scan_*.json
+exclude bandit_*.json
+exclude *_scan_results_*.json
+exclude demo*_results_*.json
+
+# Exclude development artifacts
+recursive-exclude . *.pyc
+recursive-exclude . *.pyo
+recursive-exclude . __pycache__
+recursive-exclude . .pytest_cache
+recursive-exclude . .coverage
+recursive-exclude . htmlcov
+
+# Exclude IDE and OS files
+recursive-exclude . .vscode
+recursive-exclude . .idea
+recursive-exclude . .DS_Store
+recursive-exclude . Thumbs.db
+recursive-exclude . desktop.ini
+
+# Exclude virtual environments
+recursive-exclude . .venv
+recursive-exclude . venv
+recursive-exclude . .env
+
+# Exclude logs and temporary files
+recursive-exclude . logs
+recursive-exclude . reports
+recursive-exclude . *.log
+recursive-exclude . *.tmp
+recursive-exclude . *.temp
+
+# Exclude git files
+exclude .gitignore
+exclude .gitattributes
+recursive-exclude . .git*
+
+# Exclude GitHub workflow files (except essential ones)
+exclude .github/workflows/dev-*.yml
+exclude .github/workflows/test-*.yml
+exclude .github/ISSUE_TEMPLATE/
+exclude .github/PULL_REQUEST_TEMPLATE.md
