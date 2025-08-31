@@ -40,14 +40,11 @@ report = report_gen.generate(vulnerabilities, format='html')
 - **release**: Public fork target (protected) 
 - **dev**: Development work (protected, accepts PRs)
 
-#### GitHub Rulesets Import
-1. Go to **Settings** → **Rules** → **Rulesets**
-2. Import these files in order:
-   - `github-ruleset-dev-branch.json` (moderate protection)
-   - `github-ruleset-release-branch.json` (high protection)
-   - `github-ruleset-main-branch.json` (maximum protection)
-3. Verify each shows "Active" status
-4. Delete ruleset JSON files after successful import
+#### GitHub Rulesets (Already Configured)
+✅ **GitHub rulesets are already imported and active**
+- Branch protection is working automatically
+- No additional setup required
+- dev, release, and main branches are protected
 
 #### Repository Access
 - **Main branch**: Owner only, maximum protection
@@ -95,7 +92,8 @@ git push origin feature/your-feature
 - Documentation: `README.md`, `CHANGELOG.md`, `SECURITY.md`
 - Testing: `tests/` directory, `pytest.ini`
 - GitHub config: `.github/` workflows, `CONTRIBUTING.md`, `LICENSE`
-- Rulesets: `github-ruleset-*.json` (temporary, delete after import)
+
+**Note**: GitHub rulesets are already configured - no setup files needed
 
 ### Support
 - Issues: Use GitHub Issues on dev branch
