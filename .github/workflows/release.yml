@@ -1,4 +1,7 @@
 name: Create Release
+permissions:
+  contents: write
+  packages: write
 
 # 🚀 RELEASE BRANCH ONLY WORKFLOW
 # This workflow ONLY creates releases from the 'release' branch
