@@ -1,9 +1,17 @@
 name: Create Release
 
+# 🚀 RELEASE BRANCH ONLY WORKFLOW
+# This workflow ONLY creates releases from the 'release' branch
+# - Tags must be created on the 'release' branch
+# - Manual workflow dispatch only works from 'release' branch
+# - All packages, Docker images, and GitHub releases are built from 'release' branch content
+
 on:
   push:
     tags:
       - 'v*'  # Trigger on version tags like v1.0.0
+    branches:
+      - release  # Only allow releases from release branch
   workflow_dispatch:
     inputs:
       version:
@@ -12,9 +20,46 @@ on:
         default: 'v1.0.0'
 
 jobs:
+  # Check if we're on the release branch
+  validate-branch:
+    name: Validate Release Branch
+    runs-on: ubuntu-latest
+    outputs:
+      is-release-branch: ${{ steps.check-branch.outputs.is-release-branch }}
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Check if on release branch
+      id: check-branch
+      run: |
+        BRANCH_NAME=${GITHUB_REF#refs/heads/}
+        if [[ "$GITHUB_REF" == refs/tags/* ]]; then
+          # For tags, check which branch contains the tag
+          TAG_BRANCH=$(git branch -r --contains $GITHUB_SHA | grep 'origin/release' | head -n 1)
+          if [[ -n "$TAG_BRANCH" ]]; then
+            echo "is-release-branch=true" >> $GITHUB_OUTPUT
+            echo "✅ Tag found on release branch"
+          else
+            echo "is-release-branch=false" >> $GITHUB_OUTPUT
+            echo "❌ Tag not found on release branch"
+            exit 1
+          fi
+        elif [[ "$BRANCH_NAME" == "release" ]]; then
+          echo "is-release-branch=true" >> $GITHUB_OUTPUT
+          echo "✅ On release branch"
+        else
+          echo "is-release-branch=false" >> $GITHUB_OUTPUT
+          echo "❌ Not on release branch: $BRANCH_NAME"
+          exit 1
+        fi
+
   create-release:
     name: Create Release
     runs-on: ubuntu-latest
+    needs: validate-branch
+    if: needs.validate-branch.outputs.is-release-branch == 'true'
     
     steps:
     - name: Checkout code
