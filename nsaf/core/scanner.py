@@ -7,9 +7,11 @@ import socket
 import threading
 import ipaddress
 import time
+import shlex
+import re
 from typing import List, Dict, Any, Optional, Tuple
 from concurrent.futures import ThreadPoolExecutor, as_completed
-import subprocess
+import subprocess  # nosec B404 - subprocess usage is validated and secure
 import platform
 import json
 from dataclasses import dataclass
@@ -119,11 +121,31 @@ class NetworkScanner:
         
         def ping_host(host):
             try:
+                # Validate host input to prevent command injection
+                host_str = str(host).strip()
+                if not host_str or len(host_str) > 253:
+                    return None
+                
+                # Additional validation: ensure host contains only valid characters
+                if not re.match(r'^[a-zA-Z0-9\-\.]+$', host_str):
+                    return None
+                
                 param = "-n" if platform.system().lower() == "windows" else "-c"
-                cmd = ["ping", param, "1", "-w", "1000", str(host)]
-                result = subprocess.run(cmd, capture_output=True, text=True, timeout=5)
+                timeout_param = "-w" if platform.system().lower() == "windows" else "-W"
+                
+                # Build command with validated inputs
+                cmd = ["ping", param, "1", timeout_param, "1000", host_str]
+                
+                # nosec B603 - subprocess call with validated input and no shell
+                result = subprocess.run(
+                    cmd, 
+                    capture_output=True, 
+                    text=True, 
+                    timeout=5,
+                    shell=False  # Explicitly disable shell for security
+                )
                 if result.returncode == 0:
-                    return str(host)
+                    return host_str
             except (subprocess.TimeoutExpired, subprocess.SubprocessError, OSError) as e:
                 logger.debug(f"Ping failed for {host}: {e}")
             except Exception as e:
