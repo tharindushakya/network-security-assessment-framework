@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 📖 Documentation
+    url: https://tharindushakya.github.io/network-security-assessment-framework
+    about: Check the project documentation and wiki first
+  - name: 💬 Discussion Forum
+    url: https://github.com/tharindushakya/network-security-assessment-framework/discussions
+    about: General questions and community discussions
+  - name: 🔒 Security Advisory
+    url: mailto:tharindushakya@example.com
+    about: Report critical security vulnerabilities privately
