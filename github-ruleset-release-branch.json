@@ -1,0 +1,66 @@
+{
+  "name": "NSAF Release Branch Protection", 
+  "description": "Protection for release branch - public fork target, PR only updates",
+  "target": "branch",
+  "enforcement": "active",
+  "conditions": {
+    "ref_name": {
+      "include": ["refs/heads/release"],
+      "exclude": []
+    }
+  },
+  "rules": [
+    {
+      "type": "deletion",
+      "parameters": {
+        "restricted_deletions": true
+      }
+    },
+    {
+      "type": "force_push", 
+      "parameters": {
+        "restricted_force_pushes": true
+      }
+    },
+    {
+      "type": "pull_request",
+      "parameters": {
+        "dismiss_stale_reviews_on_push": true,
+        "require_code_owner_review": false,
+        "require_last_push_approval": false,
+        "required_approving_review_count": 1,
+        "required_review_thread_resolution": true
+      }
+    },
+    {
+      "type": "required_status_checks",
+      "parameters": {
+        "required_status_checks": [
+          {
+            "context": "ci/github-actions",
+            "integration_id": null
+          },
+          {
+            "context": "security-scan", 
+            "integration_id": null
+          }
+        ],
+        "strict_required_status_checks_policy": true
+      }
+    },
+    {
+      "type": "restrict_pushes",
+      "parameters": {
+        "restricted_pushes": true
+      }
+    }
+  ],
+  "bypass_actors": [
+    {
+      "actor_id": null,
+      "actor_type": "RepositoryRole", 
+      "bypass_mode": "pull_request",
+      "role_name": "admin"
+    }
+  ]
+}
