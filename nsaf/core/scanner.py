@@ -124,8 +124,10 @@ class NetworkScanner:
                 result = subprocess.run(cmd, capture_output=True, text=True, timeout=5)
                 if result.returncode == 0:
                     return str(host)
-            except Exception:
-                pass
+            except (subprocess.TimeoutExpired, subprocess.SubprocessError, OSError) as e:
+                logger.debug(f"Ping failed for {host}: {e}")
+            except Exception as e:
+                logger.debug(f"Unexpected error pinging {host}: {e}")
             return None
 
         with ThreadPoolExecutor(max_workers=self.max_threads) as executor:
@@ -151,7 +153,11 @@ class NetworkScanner:
                     sock.close()
                     if result == 0:
                         return str(host)
-                except Exception:
+                except (socket.error, OSError) as e:
+                    logger.debug(f"Connection failed for {host}:{port}: {e}")
+                    continue
+                except Exception as e:
+                    logger.debug(f"Unexpected error checking {host}:{port}: {e}")
                     continue
             return None
 
@@ -239,8 +245,10 @@ class NetworkScanner:
                     try:
                         sock.send(b"GET / HTTP/1.1\r\nHost: " + target.encode() + b"\r\n\r\n")
                         banner = sock.recv(1024).decode('utf-8', errors='ignore')
-                    except:
-                        pass
+                    except (socket.error, socket.timeout, UnicodeDecodeError) as e:
+                        logger.debug(f"Failed to grab banner from {target}:{port}: {e}")
+                    except Exception as e:
+                        logger.debug(f"Unexpected error grabbing banner from {target}:{port}: {e}")
                     
                     service = self._identify_service(port, banner)
                     scan_result = ScanResult(
@@ -315,8 +323,10 @@ class NetworkScanner:
         # Get hostname
         try:
             host_info.hostname = socket.gethostbyaddr(target)[0]
-        except:
-            pass
+        except (socket.herror, socket.gaierror) as e:
+            logger.debug(f"Failed to resolve hostname for {target}: {e}")
+        except Exception as e:
+            logger.debug(f"Unexpected error resolving hostname for {target}: {e}")
             
         # Perform basic port scan
         scan_results = self._tcp_connect_scan(target, "1-1000")
@@ -371,8 +381,10 @@ class NetworkScanner:
                     result.version = line.split(':', 1)[1].strip()
                     break
                     
-        except Exception:
-            pass
+        except (socket.error, socket.timeout, UnicodeDecodeError) as e:
+            logger.debug(f"Failed to detect web service for {result.host}:{result.port}: {e}")
+        except Exception as e:
+            logger.debug(f"Unexpected error in web service detection for {result.host}:{result.port}: {e}")
             
         return result
 
@@ -382,8 +394,10 @@ class NetworkScanner:
             banner = sock.recv(1024).decode('utf-8', errors='ignore')
             if banner.startswith('SSH-'):
                 result.version = banner.strip()
-        except Exception:
-            pass
+        except (socket.error, socket.timeout, UnicodeDecodeError) as e:
+            logger.debug(f"Failed to detect SSH service for {result.host}:{result.port}: {e}")
+        except Exception as e:
+            logger.debug(f"Unexpected error in SSH service detection for {result.host}:{result.port}: {e}")
             
         return result
 
@@ -393,8 +407,10 @@ class NetworkScanner:
             banner = sock.recv(1024).decode('utf-8', errors='ignore')
             if '220' in banner:
                 result.banner = banner.strip()
-        except Exception:
-            pass
+        except (socket.error, socket.timeout, UnicodeDecodeError) as e:
+            logger.debug(f"Failed to detect FTP service for {result.host}:{result.port}: {e}")
+        except Exception as e:
+            logger.debug(f"Unexpected error in FTP service detection for {result.host}:{result.port}: {e}")
             
         return result
 
