@@ -1,56 +1,31 @@
 {
   "name": "NSAF Dev Branch Protection",
-  "description": "Protection for dev branch - accepts issues and contributions, moderate protection",
   "target": "branch", 
+  "source_type": "Repository",
   "enforcement": "active",
   "conditions": {
     "ref_name": {
-      "include": ["refs/heads/dev"],
-      "exclude": []
+      "exclude": [],
+      "include": ["dev"]
     }
   },
   "rules": [
     {
-      "type": "deletion",
-      "parameters": {
-        "restricted_deletions": true
-      }
-    },
-    {
-      "type": "force_push",
-      "parameters": {
-        "restricted_force_pushes": true
-      }
-    },
-    {
       "type": "pull_request",
       "parameters": {
+        "required_approving_review_count": 1,
         "dismiss_stale_reviews_on_push": false,
         "require_code_owner_review": false,
         "require_last_push_approval": false,
-        "required_approving_review_count": 1,
-        "required_review_thread_resolution": false
-      }
-    },
-    {
-      "type": "required_status_checks",
-      "parameters": {
-        "required_status_checks": [
-          {
-            "context": "ci/github-actions",
-            "integration_id": null
-          }
-        ],
-        "strict_required_status_checks_policy": false
+        "required_review_thread_resolution": false,
+        "automatic_copilot_code_review_enabled": false,
+        "allowed_merge_methods": [
+          "merge",
+          "squash",
+          "rebase"
+        ]
       }
     }
   ],
-  "bypass_actors": [
-    {
-      "actor_id": null,
-      "actor_type": "RepositoryRole",
-      "bypass_mode": "pull_request", 
-      "role_name": "admin"
-    }
-  ]
+  "bypass_actors": []
 }

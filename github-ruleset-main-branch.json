@@ -1,60 +1,37 @@
 {
   "name": "NSAF Main Branch Protection",
-  "description": "Strict protection for main branch - owner only access",
   "target": "branch",
+  "source_type": "Repository",
   "enforcement": "active",
   "conditions": {
     "ref_name": {
-      "include": ["refs/heads/main"],
-      "exclude": []
+      "exclude": [],
+      "include": ["main"]
     }
   },
   "rules": [
     {
-      "type": "deletion",
-      "parameters": {
-        "restricted_deletions": true
-      }
+      "type": "deletion"
     },
     {
-      "type": "force_push",
-      "parameters": {
-        "restricted_force_pushes": true
-      }
-    },
-    {
-      "type": "pull_request",
-      "parameters": {
-        "dismiss_stale_reviews_on_push": true,
-        "require_code_owner_review": true,
-        "require_last_push_approval": true,
-        "required_approving_review_count": 1,
-        "required_review_thread_resolution": true
-      }
-    },
-    {
-      "type": "required_status_checks",
-      "parameters": {
-        "required_status_checks": [
-          {
-            "context": "ci/github-actions",
-            "integration_id": null
-          },
-          {
-            "context": "security-scan",
-            "integration_id": null
-          }
-        ],
-        "strict_required_status_checks_policy": true
-      }
+      "type": "non_fast_forward"
     },
     {
       "type": "required_linear_history"
     },
     {
-      "type": "restrict_pushes",
+      "type": "pull_request",
       "parameters": {
-        "restricted_pushes": true
+        "required_approving_review_count": 1,
+        "dismiss_stale_reviews_on_push": true,
+        "require_code_owner_review": false,
+        "require_last_push_approval": false,
+        "required_review_thread_resolution": true,
+        "automatic_copilot_code_review_enabled": false,
+        "allowed_merge_methods": [
+          "merge",
+          "squash"
+        ]
       }
     }
   ],
