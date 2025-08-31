@@ -338,8 +338,11 @@ class ReportGenerator:
             return self._generate_basic_html_report(assessment_results, filename, title)
         
         try:
-            # Load template
-            env = Environment(loader=FileSystemLoader(self.template_dir))
+            # Load template with secure autoescape settings
+            env = Environment(
+                loader=FileSystemLoader(self.template_dir),
+                autoescape=True  # Enable autoescape to prevent XSS vulnerabilities
+            )
             template = env.get_template("report_template.html")
             
             # Prepare template data
