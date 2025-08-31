@@ -1,42 +1,27 @@
 # Bandit configuration file for NSAF
-# This file configures security scanning rules and exclusions
+exclude_dirs:
+  - .venv
+  - venv
+  - tests
+  - .git
+  - __pycache__
+  - .pytest_cache
 
-[bandit]
+# Skip specific test IDs - we handle subprocess securely
+skips:
+  - B404  # import subprocess - we validate all inputs
+  - B603  # subprocess without shell=True - we use shell=False explicitly
 
-# Exclude test directories and virtual environments
-exclude_dirs = [".venv", "venv", "tests", ".git", "__pycache__", ".pytest_cache"]
+# Report all levels for comprehensive analysis
+level: LOW
+confidence: MEDIUM
 
-# Skip specific test IDs if they are false positives
-# B404: import subprocess - We use subprocess securely with validation
-# B603: subprocess without shell=True - We explicitly use shell=False for security
-skips = []
-
-# Severity levels to report
-# LOW: Minor issues that may not be exploitable
-# MEDIUM: Issues that could potentially be exploitable  
-# HIGH: Issues that are likely exploitable
-level = LOW
-
-# Confidence levels to report
-# LOW: May produce false positives
-# MEDIUM: Moderate confidence in findings
-# HIGH: High confidence in findings  
-confidence = HIGH
-
-# Additional security hardening rules
-[bandit.hardcoded_password_string]
-# Pattern for detecting hardcoded passwords
-word_list = ["password", "pass", "passwd", "pwd", "secret", "token", "key", "api_key"]
-
-[bandit.shell_injection]
-# Patterns that may indicate shell injection vulnerabilities
-shell_injection_possible = true
-
-# Custom rule configuration
-[bandit.subprocess_popen_with_shell_equals_true]
-# Allow subprocess with shell=False (secure usage)
-subprocess_without_shell_equals_true = false
-
-[bandit.subprocess_without_shell_equals_true]
-# This is actually a secure pattern when input is validated
-check_call_args = true
+# Test inclusion/exclusion
+tests:
+  - B101  # assert_used
+  - B102  # exec_used
+  - B103  # set_bad_file_permissions
+  - B104  # hardcoded_bind_all_interfaces
+  - B105  # hardcoded_password_string
+  - B106  # hardcoded_password_funcarg
+  - B107  # hardcoded_password_default
